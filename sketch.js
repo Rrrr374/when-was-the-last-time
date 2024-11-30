@@ -26,7 +26,7 @@ function preload() {
   // Load other assets
   for (let i = 1; i <= 15; i++) {
     photos.push(loadImage(`assets/photo${i}.PNG`));
-    highlights.push(loadImage(`assets/highlight${i}.png`));
+    highlights.push(loadImage(`assets/highlight${i}.PNG`));
     hotspots.push(loadImage(`assets/hotspot${i}.png`));
     iconImages.push(loadImage(`assets/icon${i}.png`));
   }
