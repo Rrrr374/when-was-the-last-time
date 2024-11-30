@@ -14,8 +14,8 @@ let currentBackdrop;
 let stage = "landing";
 let currentIcon = null;
 
-let baseWidth = 2400; // Original canvas width
-let baseHeight = 1698; // Original canvas height
+let baseWidth = 1200; // Original canvas width
+let baseHeight = 849; // Original canvas height
 
 function preload() {
   // Load backdrops
@@ -27,7 +27,7 @@ function preload() {
   for (let i = 1; i <= 15; i++) {
     photos.push(loadImage(`assets/photo${i}.PNG`));
     highlights.push(loadImage(`assets/highlight${i}.png`));
-    hotspots.push(loadImage(`assets/hotspot${i}.PNG`));
+    hotspots.push(loadImage(`assets/hotspot${i}.png`));
     iconImages.push(loadImage(`assets/icon${i}.png`));
   }
 }
@@ -45,13 +45,13 @@ function setup() {
     return;
   }
 
-  // Initialize currentBackdrop to the first backdrop
-  currentBackdrop = backdrops[0];
-
+  // Initialize the canvas with dynamic scaling
   scaleFactor = min(windowWidth / canvasWidth, windowHeight / canvasHeight);
   createCanvas(canvasWidth * scaleFactor, canvasHeight * scaleFactor);
 
-  setupIcons();
+  currentBackdrop = backdrops[0]; // Initialize currentBackdrop
+
+  setupIcons(); // Initialize icons
 }
 
 function draw() {
@@ -84,7 +84,8 @@ function setupIcons() {
   let centerX = width / 2;
   let centerY = height / 2;
   let radius = min(width, height) * 0.35;
-  let sizes = [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100];
+  let baseSizes = [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100];
+  let scaledSizes = baseSizes.map((size) => size * scaleFactor);
 
   for (let i = 0; i < 15; i++) {
     let angle = (TWO_PI / 15) * i;
@@ -92,19 +93,8 @@ function setupIcons() {
     let y = centerY + radius * sin(angle);
 
     let section = floor(i / 5);
-    icons.push({ x, y, size: sizes[i], section, id: i });
+    icons.push({ x, y, size: scaledSizes[i], section, id: i });
   }
-
-  // Validate hotspot dimensions
-  hotspots.forEach((hotspot, index) => {
-    if (!hotspot || hotspot.width === undefined || hotspot.height === undefined) {
-      console.error(`Hotspot ${index + 1} is undefined or not fully loaded.`);
-    } else if (hotspot.width !== canvasWidth || hotspot.height !== canvasHeight) {
-      console.warn(
-        `Hotspot ${index + 1} dimensions (${hotspot.width}x${hotspot.height}) do not match canvas size (${canvasWidth}x${canvasHeight}).`
-      );
-    }
-  });
 }
 
 // LANDING PAGE
@@ -160,12 +150,31 @@ function drawThirdPage() {
 
 // BACK BUTTON
 function drawBackButton() {
-  fill(200);
-  rect(20, 20, 100, 40, 5);
-  fill(0);
-  textSize(16);
-  textAlign(CENTER, CENTER);
-  text("Back", 70, 40);
+  // Set the arrow color to white
+  push();
+  fill(255); // Pure white arrow
+  noStroke();
+  translate(50, 50); // Position the arrow
+
+  // Draw the left arrow
+  beginShape();
+  vertex(0, 0); // Tip of the arrow
+  vertex(20, -10); // Top corner
+  vertex(20, -5); // Top mid
+  vertex(40, -5); // Top of shaft
+  vertex(40, 5); // Bottom of shaft
+  vertex(20, 5); // Bottom mid
+  vertex(20, 10); // Bottom corner
+  endShape(CLOSE);
+  pop();
+
+  // (Optional) Draw an invisible larger clickable rectangle for easier interaction
+  push();
+  noFill();
+  noStroke();
+  rectMode(CENTER);
+  rect(50, 50, 60, 60); // Increase the size of the clickable area
+  pop();
 }
 
 // MOUSE EVENTS
